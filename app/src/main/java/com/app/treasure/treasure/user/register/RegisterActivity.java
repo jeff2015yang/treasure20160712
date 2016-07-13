@@ -18,6 +18,7 @@ import com.app.treasure.treasure.MainActivity;
 import com.app.treasure.treasure.R;
 import com.app.treasure.treasure.commons.ActivityUtils;
 import com.app.treasure.treasure.commons.RegexUtils;
+import com.app.treasure.treasure.components.AletDialogFragment;
 import com.app.treasure.treasure.home.HomeAcitvity;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
 
@@ -28,7 +29,7 @@ import butterknife.OnClick;
 /**
  * Created by ruifeng on 2016/7/12.
  */
-public class RegisterActivity extends MvpActivity<RegisterView,RegisterPresenter> implements RegisterView {
+public class RegisterActivity extends MvpActivity<RegisterView, RegisterPresenter> implements RegisterView {
     private ActivityUtils activityUtils;
     @Bind(R.id.toolbar_register)
     Toolbar toolbar;
@@ -43,18 +44,20 @@ public class RegisterActivity extends MvpActivity<RegisterView,RegisterPresenter
 
     private String userName;
     private String passWord;
+    private String confirm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityUtils = new ActivityUtils(this);
-        ButterKnife.bind(this);
+
         setContentView(R.layout.activity_register);
     }
 
     @Override
     public void onContentChanged() {
         super.onContentChanged();
+        ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -86,53 +89,73 @@ public class RegisterActivity extends MvpActivity<RegisterView,RegisterPresenter
         public void afterTextChanged(Editable s) {
             userName = etUsername.getText().toString();
             passWord = etUserpassword.getText().toString();
-            String confirm = etConfirm.getText().toString();
+            confirm = etConfirm.getText().toString();
             boolean canRegister = (!(TextUtils.isEmpty(userName)) && !(TextUtils.isEmpty(passWord)) && passWord.equals(confirm));
             btnRegister.setEnabled(canRegister);
         }
     };
-      @OnClick(R.id.btn_Register)
-      public void click(View v){
-          if(RegexUtils.verifyUsername(userName)!=RegexUtils.VERIFY_SUCCESS){
-              activityUtils.showToast(R.string.username_rules);
-              return;
-          }
-          if(RegexUtils.verifyPassword(passWord)!=RegexUtils.VERIFY_SUCCESS){
-          activityUtils.showToast(R.string.password_rules);
-          }
 
-          //业务处理
-      }
+    @OnClick(R.id.btn_Register)
+    public void click(View v) {
+
+        if (RegexUtils.verifyUsername(userName) != RegexUtils.VERIFY_SUCCESS) {
+            showUsenameError();
+            return;
+        }
+        if (RegexUtils.verifyPassword(passWord) != RegexUtils.VERIFY_SUCCESS) {
+            showUsenameError();
+            return;
+        }
+
+        activityUtils.showToast("业务处理");
+        //业务处理
+    }
+
+    private void showUsenameError() {
+        String string = getString(R.string.username_rules);
+        AletDialogFragment aletDialogFragment = AletDialogFragment.newInstance(R.string.username_error, string);
+        aletDialogFragment.show(getSupportFragmentManager(), "showUsenameError");
+
+    }
+
+    private void showPasswordError() {
+        String string = getString(R.string.password_rules);
+        AletDialogFragment aletDialogFragment = AletDialogFragment.newInstance(R.string.password_error, string);
+        aletDialogFragment.show(getSupportFragmentManager(), "showPasswordError");
+
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.home) {
+            activityUtils.startActivity(MainActivity.class);
             finish();
         }
         return super.onOptionsItemSelected(item);
     }
 
-   private ProgressDialog mProgressDialog;
+    private ProgressDialog mProgressDialog;
+
     @Override
     public void showProgress() {
-            activityUtils.hideSoftKeyboard();
-            mProgressDialog=ProgressDialog.show(this,"","注册中，请稍后。。。");
+        activityUtils.hideSoftKeyboard();
+        mProgressDialog = ProgressDialog.show(this, "", "注册中，请稍后。。。");
     }
 
     @Override
     public void hideProgress() {
-        if(mProgressDialog!=null){
+        if (mProgressDialog != null) {
             mProgressDialog.dismiss();
         }
     }
 
     @Override
     public void showMessage(String msg) {
-    activityUtils.showToast(msg);
+        activityUtils.showToast(msg);
     }
 
     @Override
     public void navigateToHome() {
-     activityUtils.startActivity(HomeAcitvity.class);
+        activityUtils.startActivity(HomeAcitvity.class);
         finish();
         Intent intent = new Intent(MainActivity.ACTION_ENTER_HOME);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);

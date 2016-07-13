@@ -21,6 +21,7 @@ import com.app.treasure.treasure.MainActivity;
 import com.app.treasure.treasure.R;
 import com.app.treasure.treasure.commons.ActivityUtils;
 import com.app.treasure.treasure.commons.RegexUtils;
+import com.app.treasure.treasure.components.AletDialogFragment;
 import com.app.treasure.treasure.home.HomeAcitvity;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
 
@@ -54,7 +55,7 @@ public class LoginActivity extends MvpActivity<LoginView,LoginPresenter> impleme
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.bind(this);
+
         activityUtils = new ActivityUtils(this);
         setContentView(R.layout.activity_login);
     }
@@ -62,6 +63,7 @@ public class LoginActivity extends MvpActivity<LoginView,LoginPresenter> impleme
     @Override
     public void onContentChanged() {
         super.onContentChanged();
+        ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -102,6 +104,7 @@ public class LoginActivity extends MvpActivity<LoginView,LoginPresenter> impleme
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.home:
+                activityUtils.startActivity(MainActivity.class);
                 finish();
                 break;
         }
@@ -111,15 +114,28 @@ public class LoginActivity extends MvpActivity<LoginView,LoginPresenter> impleme
     @OnClick(R.id.btn_Login)
     public void click(View v) {
         if (RegexUtils.verifyUsername(userName) != RegexUtils.VERIFY_SUCCESS) {
-            activityUtils.showToast(R.string.username_rules);
+            showUsenameError();
             return;
         }
         if (RegexUtils.verifyPassword(passWord) != RegexUtils.VERIFY_SUCCESS) {
-            activityUtils.showToast(R.string.password_rules);
+            showPasswordError();
         }
         //业务处理
+        activityUtils.showToast("业务处理");
+    }
+    private void showUsenameError(){
+        String string = getString(R.string.username_rules);
+        AletDialogFragment aletDialogFragment = AletDialogFragment.newInstance(R.string.username_error, string);
+        aletDialogFragment.show(getSupportFragmentManager(),"showUsenameError");
+
     }
 
+    private void showPasswordError(){
+        String string = getString(R.string.password_rules);
+        AletDialogFragment aletDialogFragment = AletDialogFragment.newInstance(R.string.password_error, string);
+        aletDialogFragment.show(getSupportFragmentManager(),"showPasswordError");
+
+    }
     @Override
     public void showProgress() {
         activityUtils.hideSoftKeyboard();
