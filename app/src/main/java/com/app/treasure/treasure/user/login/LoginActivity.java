@@ -72,7 +72,7 @@ public class LoginActivity extends MvpActivity<LoginView,LoginPresenter> impleme
         }
         etUsername.addTextChangedListener(mtextWathcer);
         etUserpassword.addTextChangedListener(mtextWathcer);
-
+        activityUtils.hideSoftKeyboard();
     }
 
     @NonNull
@@ -94,6 +94,7 @@ public class LoginActivity extends MvpActivity<LoginView,LoginPresenter> impleme
 
         @Override
         public void afterTextChanged(Editable s) {
+
             userName = etUsername.getText().toString();
             passWord = etUserpassword.getText().toString();
             boolean canLogin = !(TextUtils.isEmpty(userName) || TextUtils.isEmpty(passWord));
@@ -115,6 +116,7 @@ public class LoginActivity extends MvpActivity<LoginView,LoginPresenter> impleme
 
     @OnClick(R.id.btn_Login)
     public void click(View v) {
+        activityUtils.hideSoftKeyboard();
         if (RegexUtils.verifyUsername(userName) != RegexUtils.VERIFY_SUCCESS) {
             showUsenameError();
             return;
@@ -125,7 +127,7 @@ public class LoginActivity extends MvpActivity<LoginView,LoginPresenter> impleme
         //业务处理
 
         getPresenter().login(new User(userName, passWord),this);
-        activityUtils.showToast("业务处理");
+
     }
     private void showUsenameError(){
         String string = getString(R.string.username_rules);

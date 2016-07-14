@@ -68,6 +68,7 @@ public class RegisterActivity extends MvpActivity<RegisterView, RegisterPresente
         etUsername.addTextChangedListener(mTextWatcher);
         etUserpassword.addTextChangedListener(mTextWatcher);
         etConfirm.addTextChangedListener(mTextWatcher);
+        activityUtils.hideSoftKeyboard();
     }
 
     @NonNull
@@ -110,9 +111,8 @@ public class RegisterActivity extends MvpActivity<RegisterView, RegisterPresente
         }
 
         Log.e("info",userName +passWord);
-        User user = new User("saasas", "sddsds");
-        Log.e("info111111",user.toString());
-        getPresenter().register(user,this);
+
+        getPresenter().register(new User(userName,passWord),this);
         //业务处理
     }
 

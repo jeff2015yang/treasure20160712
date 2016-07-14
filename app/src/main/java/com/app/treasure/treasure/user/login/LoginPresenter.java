@@ -1,14 +1,13 @@
 package com.app.treasure.treasure.user.login;
 
-import android.app.Activity;
+
+
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
-import android.provider.MediaStore;
-import android.util.Log;
 
 import com.app.treasure.treasure.net.NetClient;
+import com.app.treasure.treasure.user.UseApi;
 import com.app.treasure.treasure.user.User;
+import com.app.treasure.treasure.user.UserPrefs;
 import com.google.gson.Gson;
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 
@@ -20,97 +19,66 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import retrofit2.Callback;
 
 /**
  * Created by ruifeng on 2016/7/13.
  */
 public class LoginPresenter extends MvpNullObjectBasePresenter<LoginView>  {
-    private User user;
-    private Call call;
-    private Gson gson;
-    private Activity activity;
-    public static final String FILE_NAME="config";
-    public static final String KYE_TOKENID="tokenid";
-    public static final String KYE_HEADURL="headurl";
+    private retrofit2.Call<LoginResult> loginCall;
+    private Context context;
     /**
      * 核心业务
      * **/
-    public void login(User user,Activity activity){
-        this.activity=activity;
-       this.user=user;
-        gson=new Gson();
-        new LoginTask().execute();
+    public void login(User user,Context context){
+        this.context=context;
+        getView().showProgress();
+        UseApi useApi = NetClient.getInstance().getUseApi();
+        if(loginCall!=null){
+            loginCall.cancel();
+        }
+        // 执行登陆请求构建出call模型
+        loginCall=useApi.login(user);
+        // Call模型异步执行
+        loginCall.enqueue(callback);
     }
-
-
-
-    private final class LoginTask extends AsyncTask<Void,Void,LoginResult>{
-      @Override
-      protected void onPreExecute() {
-          super.onPreExecute();
-          getView().showProgress();
-      }
-
-      @Override
-      protected LoginResult doInBackground(Void... params) {
-          OkHttpClient okHttpClient = NetClient.getInstance().getOkHttpClient();
-          String content = gson.toJson(user);
-          MediaType type = MediaType.parse("treasure/json");
-          RequestBody requestBody = RequestBody.create(type, content);
-          Request request=new Request.Builder()
-                  .url("http://admin.syfeicuiedu.com/Handler/UserHandler.ashx?action=login")
-                  .post(requestBody)
-                  .build();
-            if(call!=null){
-                call.cancel();
-            }
-          call=okHttpClient.newCall(request);
-          try {
-              Response response = call.execute();
-              if(response==null){
-                  return null;
-              }
-              if(response.isSuccessful()){
-                  String string = response.body().string();
-
-                  LoginResult loginResult = gson.fromJson(string, LoginResult.class);
-                  return loginResult;
-              }
-          } catch (IOException e) {
-              return null;
-          }
-          return null;
-      }
-
-      @Override
-      protected void onPostExecute(LoginResult loginResult) {
-          super.onPostExecute(loginResult);
+   private Callback<LoginResult> callback=new Callback<LoginResult>() {
+       @Override
+       public void onResponse(retrofit2.Call<LoginResult> call, retrofit2.Response<LoginResult> response) {
           getView().hideProgree();
-          if(loginResult==null){
-              getView().showMessage("未知错误！！");
-          }
-          int code = loginResult.getCode();
-          if(code==1){
+           if(response.isSuccessful()){
+               // 取出响应体(retrofit已加了gson转换器的,注意接口的定义)
+               LoginResult result = response.body();
+               if(result==null){
+                   getView().showMessage("unknow error!");
+                   return;
+               }
+               getView().showMessage(result.getMes());
+               if(result.getCode()==1){
+                   UserPrefs.init(context);
+                   UserPrefs.getInstance().setPhoto(NetClient.BASE_URL+result.getIconUrl());
+                   UserPrefs.getInstance().setTokenId(result.getTokenId());
+                   getView().navigateToHome();
+               }
+               return;
+           }
+       }
 
-              SharedPreferences sharedPreferences = activity.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
-              SharedPreferences.Editor edit = sharedPreferences.edit();
-              edit.putString(KYE_TOKENID,loginResult.getTokenId());
-              edit.putString(KYE_HEADURL,loginResult.getIconUrl());
-              edit.commit();
-              getView().showMessage(loginResult.getMes());
-              getView().navigateToHome();
-          }else{
-              getView().showMessage(loginResult.getMes());
-          }
+       @Override
+       public void onFailure(retrofit2.Call<LoginResult> call, Throwable t) {
+           getView().hideProgree();
+           getView().showMessage(t.getMessage());
+       }
+   };
 
-      }
-  }
+
+
 
     @Override
     public void detachView(boolean retainInstance) {
         super.detachView(retainInstance);
-        if(call!=null){
-            call.cancel();
+        if(loginCall!=null){
+            loginCall.cancel();
         }
     }
 

@@ -6,30 +6,30 @@ import com.google.gson.annotations.SerializedName;
  * Created by ruifeng on 2016/7/13.
  */
 public class User {
-    @SerializedName("UserName")
-    private String userName;
 
-     @SerializedName("Password")
-    private String password;
+    private String UserName;
+
+
+    private String Password;
 
     public User(String userName, String password) {
-        userName = userName;
-        password = password;
+        UserName = userName;
+        Password = password;
     }
 
     public String getUserName() {
-        return userName;
+        return UserName;
     }
 
     public String getPassword() {
-        return password;
+        return Password;
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "userName='" + userName + '\'' +
-                ", password='" + password + '\'' +
+                "UserName='" + UserName + '\'' +
+                ", Password='" + Password + '\'' +
                 '}';
     }
 }
