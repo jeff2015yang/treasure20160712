@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +21,7 @@ import com.app.treasure.treasure.commons.ActivityUtils;
 import com.app.treasure.treasure.commons.RegexUtils;
 import com.app.treasure.treasure.components.AletDialogFragment;
 import com.app.treasure.treasure.home.HomeAcitvity;
+import com.app.treasure.treasure.user.User;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
 
 import butterknife.Bind;
@@ -107,7 +109,10 @@ public class RegisterActivity extends MvpActivity<RegisterView, RegisterPresente
             return;
         }
 
-        activityUtils.showToast("业务处理");
+        Log.e("info",userName +passWord);
+        User user = new User("saasas", "sddsds");
+        Log.e("info111111",user.toString());
+        getPresenter().register(user,this);
         //业务处理
     }
 

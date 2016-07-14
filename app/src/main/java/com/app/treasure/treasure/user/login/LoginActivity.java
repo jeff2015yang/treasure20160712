@@ -23,6 +23,7 @@ import com.app.treasure.treasure.commons.ActivityUtils;
 import com.app.treasure.treasure.commons.RegexUtils;
 import com.app.treasure.treasure.components.AletDialogFragment;
 import com.app.treasure.treasure.home.HomeAcitvity;
+import com.app.treasure.treasure.user.User;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
 
 import butterknife.Bind;
@@ -71,6 +72,7 @@ public class LoginActivity extends MvpActivity<LoginView,LoginPresenter> impleme
         }
         etUsername.addTextChangedListener(mtextWathcer);
         etUserpassword.addTextChangedListener(mtextWathcer);
+
     }
 
     @NonNull
@@ -121,6 +123,8 @@ public class LoginActivity extends MvpActivity<LoginView,LoginPresenter> impleme
             showPasswordError();
         }
         //业务处理
+
+        getPresenter().login(new User(userName, passWord),this);
         activityUtils.showToast("业务处理");
     }
     private void showUsenameError(){
