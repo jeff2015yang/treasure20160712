@@ -3,6 +3,7 @@ package com.app.treasure.treasure;
 import android.app.Application;
 
 import com.app.treasure.treasure.user.UserPrefs;
+import com.baidu.mapapi.SDKInitializer;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -16,6 +17,7 @@ public class TreasureApplication extends Application {
         super.onCreate();
         UserPrefs.init(this);
         initImageLoader();
+        SDKInitializer.initialize(getApplicationContext());
     }
 
     public void initImageLoader(){

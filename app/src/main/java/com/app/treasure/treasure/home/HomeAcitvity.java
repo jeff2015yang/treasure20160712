@@ -19,6 +19,7 @@ import com.app.treasure.treasure.R;
 import com.app.treasure.treasure.commons.ActivityUtils;
 import com.app.treasure.treasure.user.UserPrefs;
 import com.app.treasure.treasure.user.account.AccountActivity;
+import com.baidu.mapapi.map.MapView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.pkmmte.view.CircularImageView;
 
@@ -102,4 +103,6 @@ public class HomeAcitvity extends BaseActivity implements NavigationView.OnNavig
         }
         super.onBackPressed();
     }
+
+
 }
