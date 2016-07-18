@@ -30,7 +30,9 @@
         <item name="android:background">@drawable/edit_bg_long</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" >
+
+        </style>
 
     <!--PopupWindow-->
     <style name="Animation.PopupWindow" parent="Animation.AppCompat.DropDownUp">

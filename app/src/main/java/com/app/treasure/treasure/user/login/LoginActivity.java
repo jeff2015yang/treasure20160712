@@ -106,9 +106,8 @@ public class LoginActivity extends MvpActivity<LoginView,LoginPresenter> impleme
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.home:
-                activityUtils.startActivity(MainActivity.class);
-                finish();
+            case android.R.id.home:
+              this.finish();
                 break;
         }
         return super.onOptionsItemSelected(item);

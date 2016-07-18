@@ -17,7 +17,10 @@ import android.widget.ImageView;
 import com.app.treasure.treasure.BaseActivity;
 import com.app.treasure.treasure.R;
 import com.app.treasure.treasure.commons.ActivityUtils;
+import com.app.treasure.treasure.user.UserPrefs;
 import com.app.treasure.treasure.user.account.AccountActivity;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.pkmmte.view.CircularImageView;
 
 import butterknife.Bind;
 
@@ -42,6 +45,7 @@ public class HomeAcitvity extends BaseActivity implements NavigationView.OnNavig
         super.onCreate(savedInstanceState);
         activityUtils = new ActivityUtils(this);
         setContentView(R.layout.activity_home);
+
     }
 
     @Override
@@ -53,12 +57,12 @@ public class HomeAcitvity extends BaseActivity implements NavigationView.OnNavig
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this
                 , drawerLayout
                 ,toolbar
-
                 , R.string.navigation_drawer_open
                 , R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
         imageView = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.iv_userIcon);
+
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,6 +84,15 @@ public class HomeAcitvity extends BaseActivity implements NavigationView.OnNavig
                 break;
         }
         return false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String imageurl= UserPrefs.getInstance().getPhoto();
+        if(imageurl!=null){
+            ImageLoader.getInstance().displayImage(imageurl,imageView);
+        }
     }
 
     @Override

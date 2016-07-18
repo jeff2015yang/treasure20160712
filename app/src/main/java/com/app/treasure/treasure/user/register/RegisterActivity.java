@@ -131,9 +131,9 @@ public class RegisterActivity extends MvpActivity<RegisterView, RegisterPresente
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.home) {
-            activityUtils.startActivity(MainActivity.class);
-            finish();
+        if (item.getItemId() == android.R.id.home) {
+
+           this.finish();
         }
         return super.onOptionsItemSelected(item);
     }

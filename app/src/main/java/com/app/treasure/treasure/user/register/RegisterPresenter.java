@@ -58,7 +58,7 @@ public class RegisterPresenter extends MvpNullObjectBasePresenter<RegisterView> 
                 }
                 getView().showMessage(result.getMessage());
                 if(result.getCode()==1){
-                    UserPrefs.init(context);
+
                     UserPrefs.getInstance().setTokenId(result.getTokenid());
                     getView().navigateToHome();
                 }

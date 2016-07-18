@@ -55,7 +55,7 @@ public class LoginPresenter extends MvpNullObjectBasePresenter<LoginView>  {
                }
                getView().showMessage(result.getMes());
                if(result.getCode()==1){
-                   UserPrefs.init(context);
+
                    UserPrefs.getInstance().setPhoto(NetClient.BASE_URL+result.getIconUrl());
                    UserPrefs.getInstance().setTokenId(result.getTokenId());
                    getView().navigateToHome();
